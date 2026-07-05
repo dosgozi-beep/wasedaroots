@@ -158,6 +158,7 @@ body[data-depth="5"] .hud .hud-tonarida{color:var(--paper);border-color:rgba(251
 .title-sub b{color:var(--ai);font-weight:700}
 .start-btn{
   position:absolute;
+  white-space:nowrap;
   top:86.5%;left:50%;
   transform:translateX(-50%);
   pointer-events:auto;
@@ -211,8 +212,16 @@ body[data-depth="5"] .hud .hud-tonarida{color:var(--paper);border-color:rgba(251
   transition:background .3s,color .3s;
 }
 .title-screen > .title-credit:hover{background:var(--ai);color:var(--paper)}
+.title-screen > .title-sound{
+  position:absolute;top:12px;right:12px;
+  border:1px solid var(--sumi);background:var(--paper);
+  font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--sumi);
+  padding:7px 16px;cursor:pointer;z-index:2;
+  transition:background .3s,color .3s;
+}
+.title-screen > .title-sound:hover{background:var(--ai);color:var(--paper);border-color:var(--ai)}
 .title-screen > .title-note{
-  position:absolute;top:10px;right:12px;
+  position:absolute;top:52px;right:12px;
   font-size:10px;letter-spacing:.16em;color:var(--gray);
   background:rgba(251,251,249,.75);padding:2px 12px;
   z-index:2;
@@ -382,6 +391,13 @@ body[data-depth="5"] .hud .hud-tonarida{color:var(--paper);border-color:rgba(251
   animation:blinkLabel 1s steps(2) infinite;
 }
 @keyframes blinkLabel{50%{opacity:.35}}
+@media(max-width:700px){
+  .title-eyebrow{font-size:12px;letter-spacing:.28em;white-space:nowrap}
+  .title-main{margin-top:12px}
+  .title-bg{top:calc(9vh + 96px)}
+  .title-screen > .title-credit{top:12px;left:12px;bottom:auto;right:auto}
+}
+
 @media(prefers-reduced-motion:reduce){
   .digger,.digscene-label{animation:none!important}
 }
@@ -603,6 +619,13 @@ footer{border-top:1px solid var(--rule);padding:40px 0 60px;background:var(--pap
 .reveal{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s cubic-bezier(.22,1,.36,1)}
 .reveal.in{opacity:1;transform:translateY(0)}
 
+@media(max-width:700px){
+  .title-eyebrow{font-size:12px;letter-spacing:.28em;white-space:nowrap}
+  .title-main{margin-top:12px}
+  .title-bg{top:calc(9vh + 96px)}
+  .title-screen > .title-credit{top:12px;left:12px;bottom:auto;right:auto}
+}
+
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition-duration:.001s!important;transition-delay:0s!important}
   .reveal{opacity:1;transform:none}
@@ -630,6 +653,7 @@ footer{border-top:1px solid var(--rule);padding:40px 0 60px;background:var(--pap
   </div>
   <p class="title-eyebrow">WASEDA ROOTS ─ DIG &amp; DISCOVER</p>
   <h1 class="title-main f0" id="titleLogo">早稲田ルーツ</h1>
+  <button class="title-sound" id="soundBtnTitle" aria-pressed="true">音 ON</button>
   <p class="title-note">音が鳴ります(右上でオフにできます)</p>
   <a class="title-credit" href='https://dosgozi-beep.github.io/tonaridahp/' target="_blank" rel="noopener">運営団体:TONARIDA ─ 公式サイトへ ↗</a>
 </div>
@@ -1042,12 +1066,18 @@ footer{border-top:1px solid var(--rule);padding:40px 0 60px;background:var(--pap
     });
   }
   var soundBtn = document.getElementById('soundBtn');
-  soundBtn.addEventListener('click', function(){
+  var soundBtnTitle = document.getElementById('soundBtnTitle');
+  function toggleSound(){
     soundOn = !soundOn;
-    soundBtn.textContent = soundOn ? '音 ON' : '音 OFF';
-    soundBtn.setAttribute('aria-pressed', String(soundOn));
+    [soundBtn, soundBtnTitle].forEach(function(b){
+      if(!b) return;
+      b.textContent = soundOn ? '音 ON' : '音 OFF';
+      b.setAttribute('aria-pressed', String(soundOn));
+    });
     if(soundOn) ensureCtx();
-  });
+  }
+  soundBtn.addEventListener('click', toggleSound);
+  if(soundBtnTitle) soundBtnTitle.addEventListener('click', toggleSound);
 
   /* ============ 状態 ============ */
   var people = {
